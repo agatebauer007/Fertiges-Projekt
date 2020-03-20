@@ -39,7 +39,7 @@ int CO2 = 0;   /* festen Wert zu zu ordnen bevor diese im ersten Durchlauf wiede
 
 
 //----------------------------------------------------------------------------------------------------------------------------//
-void sendStatusSMS() // Deklaration und Definition einer Funktion zum senden der Status SMS
+bool sendStatusSMS() // Deklaration und Definition einer Funktion zum senden der Status SMS
 {
   sim900.print("AT+CMGF=1\r");  // AT Kommando um sim900 in SMS Modus zu versetzen
   delay(100); // Verzögerung von 100ms um Kommando Zeit zu geben 
@@ -90,12 +90,13 @@ void sendStatusSMS() // Deklaration und Definition einer Funktion zum senden der
   
   sim900.println((char)26); // AT Kommandos beenden mit ^Z, ASCII Tabelle Nummer 26
   delay(100); // Verzögerung von 100ms
-
+  
+  return true;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------------//
-void sendDefinedSMS(String smsText) //Funktion für das schnellere Erstellen von SMS
+bool sendDefinedSMS(String smsText) //Funktion für das schnellere Erstellen von SMS
 {
   sim900.print("AT+CMGF=1\r"); // AT Kommando um sim900 in SMS Modus zu versetzen
   delay(100); // Verzögerung von 100ms 
@@ -108,23 +109,27 @@ void sendDefinedSMS(String smsText) //Funktion für das schnellere Erstellen von
 
   sim900.println((char)26); // Ausgabe von ^Z zum Beenden des Kommandos
   delay(100); // Verzögerung von 100ms
+  
+  return true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------------//
-void checkMQ9Voltage() // Funktion zur Überprüfung der MQ9-Spannung
+bool checkMQ9Voltage() // Funktion zur Überprüfung der MQ9-Spannung
 {
   if (sensorVolt <= 0.94) // if-Schleife falls Spannung unter/gleich 0,94 Volt ist
   {
     digitalWrite (LED_GRUEN, HIGH); // Grünes LED anschalten
     digitalWrite (LED_ROT, LOW);  // Rotes LED ausschalten
+    return true;
   }
 
   else // falls Spannung über 0,94 Volt
   {
     digitalWrite (LED_GRUEN, LOW); // Grünes LED ausschalten
     digitalWrite (LED_ROT, HIGH); // Rotes LED anschalten
+    return true;
   }
 }
 
@@ -162,7 +167,7 @@ void checkSensors() // Funktion zum Überprüfen der Sensoren und schicken einer
   {
     sendDefinedSMS("Niedriger Luftdruck");        // Sende SMS mit: "Niedriger Luftdruck" --> Aufruf der Funktion
   }
-der
+
   if (bmp.readPressure() >= 101400)               // if-Schleife, falls der ausgelesene größer oder gleich 101400Pa ist
   {
     sendDefinedSMS("Hoher Luftdruck");            // Sende SMS mit: "Hoher Luftdruck" --> Aufruf der Funktion
@@ -184,7 +189,7 @@ der
 
 
 //----------------------------------------------------------------------------------------------------------------------------//
-void sim900Power() // Funktion zum starten des Sim Moduls über das Arduino 
+bool sim900Power() // Funktion zum starten des Sim Moduls über das Arduino 
 {
   pinMode(9, OUTPUT); // Definiere Pin 9 als Output
   digitalWrite(9,LOW); // Stelle sicher, dass durch Pin 9 kein Strom fließt
@@ -193,6 +198,7 @@ void sim900Power() // Funktion zum starten des Sim Moduls über das Arduino
   delay(3000); // Verzögerung von 3000ms
   digitalWrite(9,LOW); // Strom auf Pin 9 ausschalten 
   delay(3000); // Verzögerung von 3000ms
+  return true;
 }
 
 
@@ -211,12 +217,16 @@ void checkIncomingSMS() // Funktion die das SMS Modul auf eintreffende Nachricht
       if (incomingCharStr.indexOf("STATUS")>=0) // Nachricht soll "STATUS" enthalten, damit if Schleife ausgeführt wird
       {
         sendStatusSMS(); // Ausführen der Funktion zum Senden der Status SMS
+        return true;
       }
-      else{} // Ansonsten passiert nichts
+      else{
+        return true;} // Ansonsten passiert nichts
     }
-    else{} // Ansonsten passiert nichts
+    else{
+      return true;} // Ansonsten passiert nichts
   }
-  else{} // Ansonsten passiert nichts
+  else{
+    return true;} // Ansonsten passiert nichts
 }
 
 
