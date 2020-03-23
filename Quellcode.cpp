@@ -203,7 +203,7 @@ bool sim900Power() // Funktion zum starten des Sim Moduls über das Arduino
 
 
 //----------------------------------------------------------------------------------------------------------------------------//
-void checkIncomingSMS() // Funktion die das SMS Modul auf eintreffende Nachrichten überprüft
+bool checkIncomingSMS() // Funktion die das SMS Modul auf eintreffende Nachrichten überprüft
 {
   if(sim900.available() >0) // Überprüfen ob Modul angeschaltet ist
   { 
